@@ -1071,11 +1071,11 @@ class Inator {
 			let y;
 			if (staffY>0) {
 				for (y=s.y-s.spy; y>noteY-(s.spy/4); y=y-s.spy) {
-					t.drawLine(noteX-nd[1], y, noteX+nd[1], y, noteheadColor, s.h/100, true);
+					t.drawLine(noteX-nd[1], y, noteX+nd[1], y, noteheadColor, s.h/20, true);
 				}
 			} else {
 				for (y=s.y+s.h+s.spy; y<noteY+(s.spy/4); y=y+s.spy) {
-					t.drawLine(noteX-nd[1], y, noteX+nd[1], y, noteheadColor, s.h/100, true);
+					t.drawLine(noteX-nd[1], y, noteX+nd[1], y, noteheadColor, s.h/20, true);
 				}
 			}
 			
@@ -1337,7 +1337,7 @@ class Inator {
 		t.staves.forEach((s) => {
 			if (s.visible) {
 				for (let i=0; i<5; i++) {
-					t.drawLine(s.x, s.y+((s.h/4)*i), s.x+s.w, s.y+((s.h/4)*i), s.color, s.h/100, true);
+					t.drawLine(s.x, s.y+((s.h/4)*i), s.x+s.w, s.y+((s.h/4)*i), s.color, s.h/50, true);
 				}
 				let spy = s.h/4;
 				let spx = t.scaleYToX(spy);
