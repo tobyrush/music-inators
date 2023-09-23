@@ -1018,7 +1018,7 @@ class Inator {
 		let dotX = t.getXFromStaffX(staffIndex, staffX)+(nd[1]*1.6);
 		let dotY = t.getYFromStaffY(staffIndex, (Math.floor(staffY/2)*2)+1);
 		for (let i = 0; i<numberOfDots; i++) {
-			t.drawText(dotX+(s.spx*i), dotY, '\ue1e7', s.h*0.7, 'center', 'normal', dotColor, undefined, undefined, undefined, 'Bravura', undefined, undefined, 'alphabetic');
+			t.drawText(dotX+(s.spx*i), dotY, '\ue1e7', s.h*0.7, 'center', '400', dotColor, undefined, undefined, undefined, 'Bravura', undefined, undefined, 'alphabetic');
 		}
 	}
 	addAccidental(staffIndex,staffX,staffY,accidental,noteheadType,accidentalColor=this.notationFigureColor) {
@@ -1035,7 +1035,7 @@ class Inator {
 			'doubleSharp':t.doubleSharpSymbol,
 			'doubleFlat':t.doubleFlatSymbol
 		}[accidental];
-		t.drawText(x-nd[1], y, accText, s.h, 'right', 'normal', accidentalColor, undefined, undefined, undefined, 'Bravura', undefined, undefined, 'alphabetic');
+		t.drawText(x-nd[1], y, accText, s.h, 'right', '400', accidentalColor, undefined, undefined, undefined, 'Bravura', undefined, undefined, 'alphabetic');
 	}
 	addStem(staffIndex,staffX,staffY,noteheadType,numberOfFlags,forceDirection=0,stemVerticalOffset=0,stemColor=this.notationFigureColor) {
 		let t = this;
@@ -1051,11 +1051,11 @@ class Inator {
 		if ((staffY<0 && forceDirection==0) || forceDirection==1) {
 			stemX = x+(nd[1]/2);
 			t.drawLine(stemX, y+vo, stemX, Math.min(y-(s.spy*3.5),s.y+(s.h/2)), '#000000', s.h/75, true);
-			t.drawText(stemX, Math.min(y-(s.spy*3.5),s.y+(s.h/2)), uf[numberOfFlags], s.h, 'left', 'normal', stemColor, undefined, undefined, undefined, 'Bravura', undefined, undefined, 'alphabetic');
+			t.drawText(stemX, Math.min(y-(s.spy*3.5),s.y+(s.h/2)), uf[numberOfFlags], s.h, 'left', '400', stemColor, undefined, undefined, undefined, 'Bravura', undefined, undefined, 'alphabetic');
 		} else {
 			stemX = x-(nd[1]/2);
 			t.drawLine(stemX, y-vo, stemX, Math.max(y+(s.spy*3.5),s.y+(s.h/2)), '#000000', s.h/75, true);
-			t.drawText(stemX, Math.max(y+(s.spy*3.5),s.y+(s.h/2)), df[numberOfFlags], s.h, 'left', 'normal', stemColor, undefined, undefined, undefined, 'Bravura', undefined, undefined, 'alphabetic');
+			t.drawText(stemX, Math.max(y+(s.spy*3.5),s.y+(s.h/2)), df[numberOfFlags], s.h, 'left', '400', stemColor, undefined, undefined, undefined, 'Bravura', undefined, undefined, 'alphabetic');
 		}
 	}
 	addNotehead(staffIndex,staffX,staffY,noteheadType,offset=0,noteheadColor=this.notationFigureColor) {
@@ -1080,7 +1080,7 @@ class Inator {
 			}
 			
 		}
-		t.drawText(x+(nd[1]*offset), t.getYFromStaffY(staffIndex, staffY), nd[0], s.h, 'center', 'normal', noteheadColor, undefined, undefined, undefined, 'Bravura', undefined, undefined, 'alphabetic');
+		t.drawText(x+(nd[1]*offset), t.getYFromStaffY(staffIndex, staffY), nd[0], s.h, 'center', '400', noteheadColor, undefined, undefined, undefined, 'Bravura', undefined, undefined, 'alphabetic');
 		return nd[1];
 	}
 	getXFromStaffX(staffIndex,staffX) { // staffX is the number of staff space units from the left edge of the staff
@@ -1342,7 +1342,7 @@ class Inator {
 				let spy = s.h/4;
 				let spx = t.scaleYToX(spy);
 				s.symbols.forEach((sym) => {
-					t.drawText(s.x+(spx*sym[2]), s.y+(spy*sym[3]), sym[1], s.h*sym[4], sym[5], 'normal', s.color, undefined, undefined, undefined, sym[0] ? 'Bravura' : undefined, undefined, undefined, 'alphabetic');
+					t.drawText(s.x+(spx*sym[2]), s.y+(spy*sym[3]), sym[1], s.h*sym[4], sym[5], '400', s.color, undefined, undefined, undefined, sym[0] ? 'Bravura' : undefined, undefined, undefined, 'alphabetic');
 				});
 			}
 		});
