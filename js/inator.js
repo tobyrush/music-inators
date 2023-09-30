@@ -230,8 +230,8 @@ class Inator {
 	}
 	midiToStaffNote(midiNote, clef='treble', useSharps=true) {
 		var result;
-		var clefOffsets = { 'treble': -27, 'alto': -21, 'tenor': -19, 'bass': -15 }
-		result.staffPosition = (this.midiToNoteOctave(midiNote)*7) + this.midiToDiatonicPitchClass(midiNote, useSharps) + clefOffsets[clef];
+		var clefOffsets = { 'treble': -27, 'unpitched': -27, 'alto': -21, 'tenor': -19, 'bass': -15 }
+		result.staffIndex = (this.midiToNoteOctave(midiNote)*7) + this.midiToDiatonicPitchClass(midiNote, useSharps) + clefOffsets[clef];
 		result.accidental = this.midiToAccidental(midiNote);
 		return result;
 	}
