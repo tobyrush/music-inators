@@ -228,6 +228,13 @@ class Inator {
 	midiToNoteOctave(midiNote) {
 		return Math.floor(midiNote/12)-1;
 	}
+	midiToStaffNote(midiNote, clef='treble', useSharps=true) {
+		var result;
+		var clefOffsets = { 'treble': -27, 'alto': -21, 'tenor': -19, 'bass': -15 }
+		result.staffPosition = (this.midiToNoteOctave(midiNote)*7) + this.midiToDiatonicPitchClass(midiNote, useSharps) + clefOffsets[clef];
+		result.accidental = this.midiToAccidental(midiNote);
+		return result;
+	}
 	getEventPosition(e) {
 		let rect = this.myCanvas.getBoundingClientRect();
 		return {
