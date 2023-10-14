@@ -20,12 +20,8 @@ class Inator {
 		this.myCanvas.width = this.myCanvas.clientWidth;
 		this.myCanvas.height = this.myCanvas.clientHeight;
 		this.myCanvas.tabIndex = 0;
-		this.myCanvas.addEventListener('touchstart', function(e) { e.preventDefault(); });
 		for (let e in eventRegistry) {
 			this.myCanvas.addEventListener(e,eventRegistry[e]);
-		}
-		if (this.myDocument.querySelector('#main')) {
-			this.myDocument.querySelector('#main').addEventListener('scroll', this.scrolled.bind(this));
 		}
 		this.mouseIsDown = false;
 		this.keyIsDown = false;
@@ -44,11 +40,14 @@ class Inator {
 		this.midiIsAvailable = false;
 		this.images = {};
 		
-		this.myWindow.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', this.setDarkMode.bind(this));
 		this.darkMode = (this.myWindow.matchMedia && this.myWindow.matchMedia('(prefers-color-scheme: dark)').matches);
 		this.setColors();
 		this.setStrings();
-		
+		this.myCanvas.addEventListener('touchstart', function(e) { e.preventDefault(); });
+		this.myWindow.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', this.setDarkMode.bind(this));
+		if (this.myDocument.querySelector('#main')) {
+			this.myDocument.querySelector('#main').addEventListener('scroll', this.scrolled.bind(this));
+		}
 	}
 	async loadBravura() {
 		if (bravuraFont) {
@@ -120,9 +119,9 @@ class Inator {
 		this.doubleSharpSymbol = '\ue263';
 		this.doubleFlatSymbol = '\ue264';
 	}
-	resourceURL(filename) {
-		return this.resourcesDirectory+filename;
-	}
+	// resourceURL(filename) {
+	// 	return this.resourcesDirectory+filename;
+	// }
 	getParam(paramName) {
 		let val = this.myCanvas.dataset[paramName];
 		if (val) {
@@ -135,7 +134,7 @@ class Inator {
 			return [];
 		}
 	}
-	set power(val) {
+	setPower(val) {
 		if (val) {
 			this.pow = true;
 			if (typeof this.powerOn === "function") { this.powerOn(); }
@@ -144,10 +143,10 @@ class Inator {
 			if (typeof this.powerOff === "function") { this.powerOff(); }
 		}
 	}
-	get power() {
+	power() {
 		return this.pow;
 	}
-	set sound(val) {
+	setSound(val) {
 		if (val) {
 			this.sou = true;
 			if (typeof this.soundOn === "function") { this.soundOn(); }
@@ -156,18 +155,18 @@ class Inator {
 			if (typeof this.soundOff === "function") { this.soundOff(); }
 		}
 	}
-	get sound() {
+	sound() {
 		return this.sou;
 	}
 	scrolled(e) {
 		// turn power off when canvas is scrolled off-screen
 		let r = this.myCanvas.getBoundingClientRect();
-		if (this.power && (r.bottom<0 || r.top - (Math.max(this.myDocument.documentElement.clientHeight, window.innerHeight)) >= 0)) {
-			this.power = false;
+		if (this.power() && (r.bottom<0 || r.top - (Math.max(this.myDocument.documentElement.clientHeight, window.innerHeight)) >= 0)) {
+			this.setPower(false);
 			this.draw();
 		}
-		if (this.autoPowerOn && !this.power && !(r.bottom<0 || r.top - (Math.max(this.myDocument.documentElement.clientHeight, window.innerHeight)) >= 0)) {
-			this.power = true;
+		if (this.autoPowerOn && !this.power() && !(r.bottom<0 || r.top - (Math.max(this.myDocument.documentElement.clientHeight, window.innerHeight)) >= 0)) {
+			this.setPower(true);
 			this.draw();
 		}
 	}
@@ -229,10 +228,10 @@ class Inator {
 		return Math.floor(midiNote/12)-1;
 	}
 	midiToStaffNote(midiNote, clef='treble', useSharps=true) {
-		var result;
+		var result = {};
 		var clefOffsets = { 'treble': -27, 'unpitched': -27, 'alto': -21, 'tenor': -19, 'bass': -15 }
 		result.staffIndex = (this.midiToNoteOctave(midiNote)*7) + this.midiToDiatonicPitchClass(midiNote, useSharps) + clefOffsets[clef];
-		result.accidental = this.midiToAccidental(midiNote);
+		result.accidental = this.midiToAccidental(midiNote) ? (useSharps ? 'sharp' : 'flat') : '';
 		return result;
 	}
 	getEventPosition(e) {
@@ -270,9 +269,9 @@ class Inator {
 	initializeMIDI(noteOnFunc,noteOffFunc,successFunc=null) {
 		if (navigator.requestMIDIAccess) {
 			this.midiIsAvailable = true;
-			this.midiNoteOnFunc = noteOnFunc;
-			this.midiNoteOffFunc = noteOffFunc;
-			this.midiSuccessFunc = successFunc;
+			this.midiNoteOnFunc = noteOnFunc?.bind(this);
+			this.midiNoteOffFunc = noteOffFunc?.bind(this);
+			this.midiSuccessFunc = successFunc?.bind(this);
 			navigator.requestMIDIAccess().then(this.onMIDISuccess.bind(this),this.onMIDIFailure.bind(this));
 			return true;
 		} else {
@@ -684,9 +683,9 @@ class Inator {
 			t.ctx.strokeStyle = f.length>1 ? f[1] : t.red;
 			t.ctx.lineWidth = f.length>2 ? t.x(f[2]) : t.x(0.2);
 			t.ctx.beginPath();
-			t.ctx.moveTo(lf,ht-(((f[0](stX))*ySc)+(ht/2))+tp);
+			t.ctx.moveTo(lf,ht-(((f[0].bind(t)(stX))*ySc)+(ht/2))+tp);
 			for (x=lf+1; x<(lf+wd); x+=1) {
-				t.ctx.lineTo(x,ht-(((f[0](((x-lf)*xSc)+stX))*ySc)+(ht/2))+tp);
+				t.ctx.lineTo(x,ht-(((f[0].bind(t)(((x-lf)*xSc)+stX))*ySc)+(ht/2))+tp);
 			}
 			// t.ctx.closePath();
 			t.ctx.stroke();
@@ -710,7 +709,7 @@ class Inator {
 		t.myCanvas.addEventListener('pointerdown', (e) => {
 			let epos = t.getEventPosition(e);
 			if (epos.x>left && epos.x<left+t.powerButtonWidth && epos.y>top && epos.y<top+t.scaleXToY(t.powerButtonWidth)) {
-				t.power = !t.power;
+				t.setPower(!t.power());
 				t.draw();
 			}
 		});
@@ -729,11 +728,9 @@ class Inator {
 	addSlider(left,top,width,height,value,enabled,changeFunc) {
 		let t = this;
 		let sliderNum = t.sliders.length;
-		let s = {x: left, y: top, w: width, h: height, value: value, enabled: enabled, active: false, changeFunc: changeFunc, isVertical: t.x(width) < t.y(height)};
+		let changeFuncBound = changeFunc.bind(this);
+		let s = {x: left, y: top, w: width, h: height, value: value, enabled: enabled, active: false, changeFunc: changeFuncBound, isVertical: t.x(width) < t.y(height)};
 		t.sliders.push(s);
-		// let knobX = function() {
-		//     return left+(width*(value/100));
-		// };
 		t.myCanvas.addEventListener('pointerdown', (e) => {
 			t.mouseIsDown = true;
 			let epos = t.getEventPosition(e);
@@ -748,7 +745,7 @@ class Inator {
 				let epos = t.getEventPosition(e);
 				if (s.active) {
 					s.value = (s.isVertical ? 100-(Math.min(Math.max((((epos.y-s.y)/s.h)*100),0),100)) : (Math.min(Math.max((((epos.x-s.x)/s.w)*100),0),100)));
-					changeFunc(s.value);
+					changeFuncBound(s.value);
 					e.preventDefault();
 					t.draw();
 				}
@@ -780,7 +777,8 @@ class Inator {
 	addSmallSlider(left,top,width,height,value,enabled,color,changeFunc) {
 		let t = this;
 		let sliderNum = t.smallSliders.length;
-		let s = {x: left, y: top, w: width, h: height, value: value, enabled: enabled, active: false, color: color, changeFunc: changeFunc, isVertical: t.x(width) < t.y(height)};
+		let changeFuncBound = changeFunc.bind(this);
+		let s = {x: left, y: top, w: width, h: height, value: value, enabled: enabled, active: false, color: color, changeFunc: changeFuncBound, isVertical: t.x(width) < t.y(height)};
 		t.smallSliders.push(s);
 		t.myCanvas.addEventListener('pointerdown', (e) => {
 			t.mouseIsDown = true;
@@ -796,7 +794,7 @@ class Inator {
 				let epos = t.getEventPosition(e);
 				if (s.active) {
 					s.value = (s.isVertical ? 100-(Math.min(Math.max((((epos.y-s.y)/s.h)*100),0),100)) : (Math.min(Math.max((((epos.x-s.x)/s.w)*100),0),100)));
-					changeFunc(s.value);
+					changeFuncBound(s.value);
 					t.draw();
 				}
 			}
@@ -922,6 +920,9 @@ class Inator {
 		var staffY = ((this.midiToNoteOctave(midiNote)+1)*7)+this.midiToDiatonicPitchClass(midiNote,useSharps)-offset;
 		var acc = this.midiToAccidental(midiNote) ? (useSharps ? 'sharp' : 'flat') : '';
 		this.addNote(staffIndex, staffX, staffY, noteType, numberOfDots, acc, forceStemDirection, noteColor, accidentalOffset);
+	}
+	addStaffNote(staffIndex,staffX,staffNote,noteType,numberOfDots=0,forceStemDirection=0,noteColor=this.notationFigureColor,accidentalOffset=0) {
+		this.addNote(staffIndex,staffX,staffNote.staffIndex,noteType,numberOfDots,staffNote.accidental,forceStemDirection,noteColor,accidentalOffset);
 	}
 	addNote(staffIndex,staffX,staffY,noteType,numberOfDots=0,accidental='',forceStemDirection=0,noteColor=this.notationFigureColor,accidentalOffset=0) {
 		let t = this;
@@ -1127,7 +1128,7 @@ class Inator {
 	setStaffColor(staffIndex,color) {
 		this.staves[staffIndex].color = color;
 	}
-	addKeyboard(left,top,width,height,startingNote,enabled,keyDownFunc,keyUpFunc,numWhiteKeys=0,isPolyphonic='false',showFeedback='true') {
+	addKeyboard(left,top,width,height,startingNote,enabled,keyDownFunc=null,keyUpFunc=null,numWhiteKeys=0,isPolyphonic='false',showFeedback='true') {
 		let t = this;
 		let kbNum = t.keyboards.length;
 		let diatonicPos = [0,1,1,2,2,3,4,4,5,5,6,6][startingNote % 12];
@@ -1149,7 +1150,9 @@ class Inator {
 		});
 		
 		let adjWidth = (numWhiteKeys>0) ? (numWhiteKeys * t.scaleYToX(height/4)) : width;
-		let k = {x: left, y: top, w: adjWidth, h: height, lowNote: ln, dp: diatonicPos, notesOn: new Set(), enabled: enabled, keyDownFunction: keyDownFunc, keyUpFunction: keyUpFunc, isPolyphonic: isPolyphonic, showFeedback: showFeedback, keyFills: [], keyMarks: [] };
+		let keyDownFuncBound = keyDownFunc?.bind(t);
+		let keyUpFuncBound = keyUpFunc?.bind(t);
+		let k = {x: left, y: top, w: adjWidth, h: height, lowNote: ln, dp: diatonicPos, notesOn: new Set(), enabled: enabled, keyDownFunction: keyDownFuncBound, keyUpFunction: keyUpFuncBound, isPolyphonic: isPolyphonic, showFeedback: showFeedback, keyFills: [], keyMarks: [] };
 		t.keyboards.push(k);
 		// t.keyboardIsPolyphonic[kbNum] = isPolyphonic;
 		
@@ -1159,7 +1162,7 @@ class Inator {
 			if (k.enabled && epos.x>left && epos.x<left+adjWidth && epos.y>top && epos.y<top+height) {
 				let midiNote = getMIDINote(epos.x-left,epos.y-top);
 				k.notesOn.add(midiNote);
-				keyDownFunc(midiNote);
+				keyDownFuncBound?.(midiNote);
 				t.draw();
 			}
 		});
@@ -1171,16 +1174,16 @@ class Inator {
 					let midiNote = getMIDINote(epos.x-left,epos.y-top);
 					if (!k.notesOn.has(midiNote)) {
 						k.notesOn.forEach((n) => {
-							keyUpFunc(n);
+							keyUpFuncBound?.(n);
 						});
 						k.notesOn.clear();
 						k.notesOn.add(midiNote);
-						keyDownFunc(midiNote);
+						keyDownFuncBound?.(midiNote);
 						t.draw();
 					}
 				} else {
 					k.notesOn.forEach((n) => {
-						keyUpFunc(n);
+						keyUpFuncBound?.(n);
 					});
 					k.notesOn.clear();
 					t.draw();
@@ -1190,7 +1193,7 @@ class Inator {
 		
 		t.myCanvas.addEventListener('pointerleave', (e) => {
 			k.notesOn.forEach((n) => {
-				keyUpFunc(n);
+				keyUpFuncBound?.(n);
 			});
 			k.notesOn.clear();
 			t.draw();
@@ -1200,7 +1203,7 @@ class Inator {
 			if (k.enabled) {
 				t.mouseIsDown = false;
 				k.notesOn.forEach((n) => {
-					keyUpFunc(n);
+					keyUpFuncBound?.(n);
 				});
 				k.notesOn.clear();
 				t.draw();
@@ -1211,16 +1214,16 @@ class Inator {
 	}
 	pressKeyboardKey(index, midiNote) {
 		this.keyboards[index].notesOn.add(midiNote);
-		this.keyboards[index].keyDownFunction(midiNote);
+		this.keyboards[index].keyDownFunction?.(midiNote);
 		this.draw();
 	}
 	releaseKeyboardKey(index, midiNote) {
 		if (this.keyboards[index].isPolyphonic) {
 			this.keyboards[index].notesOn.delete(midiNote);
-			this.keyboards[index].keyUpFunction(midiNote);
+			this.keyboards[index].keyUpFunction?.(midiNote);
 		} else {
 			this.keyboards[index].notesOn.forEach((n) => {
-				this.keyboards[index].keyUpFunction(n);
+				this.keyboards[index].keyUpFunction?.(n);
 			});
 			this.keyboards[index].notesOn.clear();
 		}
@@ -1253,7 +1256,7 @@ class Inator {
 		this.draw();
 	}
 	enableMouseWheel(callback, resolution = 1) {
-		this.mouseWheelCallback = callback;
+		this.mouseWheelCallback = callback.bind(this);
 		this.mouseWheelResolution = resolution;
 		this.myCanvas.addEventListener("mousewheel",this.doMouseWheelCallback.bind(this),false);
 		this.myCanvas.addEventListener("DOMMouseScroll",this.doMouseWheelCallback.bind(this),false);
@@ -1284,7 +1287,7 @@ class Inator {
 			let py = t.powerButton.y;
 			let pw = t.powerButtonWidth;
 			let ph = t.scaleXToY(t.powerButtonWidth);
-			if (t.power) {
+			if (t.power()) {
 				t.fillRect(px, py, pw, ph, t.green);
 			} else {
 				t.fillRect(px, py, pw, ph, t.lightGray);
