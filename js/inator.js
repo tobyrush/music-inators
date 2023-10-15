@@ -832,16 +832,6 @@ class Inator {
 		t.setKey(staffNum,keySignature);
 		return staffNum;
 	}
-	clearStaff(staffIndex, clearKey=false, clearClef=false) {
-		let sl = this.staves[staffIndex].symbols.filter(symbol => symbol[6]=='key' || symbol[6]=='clef');
-		if (clearKey) {
-			sl = sl.filter(symbol => symbol[6]!='key');
-		}
-		if (clearClef) {
-			sl = sl.filter(symbol => symbol[6]!='clef');
-		}
-		this.staves[staffIndex].symbols = sl;
-	}
 	setKey(staffIndex,keySignature) {
 		let sharps = [];
 		let flats = [];
@@ -919,10 +909,10 @@ class Inator {
 		}
 		var staffY = ((this.midiToNoteOctave(midiNote)+1)*7)+this.midiToDiatonicPitchClass(midiNote,useSharps)-offset;
 		var acc = this.midiToAccidental(midiNote) ? (useSharps ? 'sharp' : 'flat') : '';
-		this.addNote(staffIndex, staffX, staffY, noteType, numberOfDots, acc, forceStemDirection, noteColor, accidentalOffset);
+		return this.addNote(staffIndex, staffX, staffY, noteType, numberOfDots, acc, forceStemDirection, noteColor, accidentalOffset);
 	}
 	addStaffNote(staffIndex,staffX,staffNote,noteType,numberOfDots=0,forceStemDirection=0,noteColor=this.notationFigureColor,accidentalOffset=0) {
-		this.addNote(staffIndex,staffX,staffNote.staffIndex,noteType,numberOfDots,staffNote.accidental,forceStemDirection,noteColor,accidentalOffset);
+		return this.addNote(staffIndex,staffX,staffNote.staffIndex,noteType,numberOfDots,staffNote.accidental,forceStemDirection,noteColor,accidentalOffset);
 	}
 	addNote(staffIndex,staffX,staffY,noteType,numberOfDots=0,accidental='',forceStemDirection=0,noteColor=this.notationFigureColor,accidentalOffset=0) {
 		let t = this;
