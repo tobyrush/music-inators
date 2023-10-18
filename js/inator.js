@@ -907,12 +907,15 @@ class Inator {
 			case 'bass':
 				offset = 29;
 		}
-		var staffY = ((this.midiToNoteOctave(midiNote)+1)*7)+this.midiToDiatonicPitchClass(midiNote,useSharps)-offset;
-		var acc = this.midiToAccidental(midiNote) ? (useSharps ? 'sharp' : 'flat') : '';
+		var staffY, acc = '';
+		if (midiNote) {
+			staffY = ((this.midiToNoteOctave(midiNote)+1)*7)+this.midiToDiatonicPitchClass(midiNote,useSharps)-offset;
+			acc = this.midiToAccidental(midiNote) ? (useSharps ? 'sharp' : 'flat') : '';
+		}
 		return this.addNote(staffIndex, staffX, staffY, noteType, numberOfDots, acc, forceStemDirection, noteColor, accidentalOffset);
 	}
 	addStaffNote(staffIndex,staffX,staffNote,noteType,numberOfDots=0,forceStemDirection=0,noteColor=this.notationFigureColor,accidentalOffset=0) {
-		return this.addNote(staffIndex,staffX,staffNote.staffIndex,noteType,numberOfDots,staffNote.accidental,forceStemDirection,noteColor,accidentalOffset);
+		return this.addNote(staffIndex,staffX,staffNote.staffIndex ?? null,noteType,numberOfDots,staffNote.accidental ?? '',forceStemDirection,noteColor,accidentalOffset);
 	}
 	addNote(staffIndex,staffX,staffY,noteType,numberOfDots=0,accidental='',forceStemDirection=0,noteColor=this.notationFigureColor,accidentalOffset=0) {
 		let t = this;
@@ -994,17 +997,21 @@ class Inator {
 				addStem = false;
 				break;
 		}
-		let nhw = t.addNotehead(staffIndex, staffX, staffY, noteheadType, 0, noteColor);
-		if (addStem) {
-			t.addStem(staffIndex, staffX, staffY, noteheadType, numberOfFlags, forceStemDirection, stemOffset, noteColor);
+		if (staffY!==null) {
+			let nhw = t.addNotehead(staffIndex, staffX, staffY, noteheadType, 0, noteColor);
+			if (addStem) {
+				t.addStem(staffIndex, staffX, staffY, noteheadType, numberOfFlags, forceStemDirection, stemOffset, noteColor);
+			}
+			if (accidental) {
+				t.addAccidental(staffIndex, staffX-accidentalOffset, staffY, accidental, noteheadType, noteColor);
+			}
+			if (numberOfDots) {
+				t.addDots(staffIndex, staffX, staffY, numberOfDots, noteheadType, noteColor);
+			}
+			return nhw;
+		} else {
+			return 0;
 		}
-		if (accidental) {
-			t.addAccidental(staffIndex, staffX-accidentalOffset, staffY, accidental, noteheadType, noteColor);
-		}
-		if (numberOfDots) {
-			t.addDots(staffIndex, staffX, staffY, numberOfDots, noteheadType, noteColor);
-		}
-		return nhw;
 	}
 	addDots(staffIndex,staffX,staffY,numberOfDots,noteheadType,dotColor=this.notationFigureColor) {
 		let t = this;
@@ -1048,11 +1055,11 @@ class Inator {
 		let stemX;
 		if ((staffY<0 && forceDirection==0) || forceDirection==1) {
 			stemX = x+(nd[1]/2);
-			t.drawLine(stemX, y+vo, stemX, Math.min(y-(s.spy*3.5),s.y+(s.h/2)), '#000000', s.h/75, true);
+			t.drawLine(stemX, y+vo, stemX, Math.min(y-(s.spy*3.5),s.y+(s.h/2)), '#000000', s.h/50, true);
 			t.drawText(stemX, Math.min(y-(s.spy*3.5),s.y+(s.h/2)), uf[numberOfFlags], s.h, 'left', '400', stemColor, undefined, undefined, undefined, 'Bravura', undefined, undefined, 'alphabetic');
 		} else {
 			stemX = x-(nd[1]/2);
-			t.drawLine(stemX, y-vo, stemX, Math.max(y+(s.spy*3.5),s.y+(s.h/2)), '#000000', s.h/75, true);
+			t.drawLine(stemX, y-vo, stemX, Math.max(y+(s.spy*3.5),s.y+(s.h/2)), '#000000', s.h/50, true);
 			t.drawText(stemX, Math.max(y+(s.spy*3.5),s.y+(s.h/2)), df[numberOfFlags], s.h, 'left', '400', stemColor, undefined, undefined, undefined, 'Bravura', undefined, undefined, 'alphabetic');
 		}
 	}
