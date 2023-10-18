@@ -1069,11 +1069,11 @@ class Inator {
 			let y;
 			if (staffY>0) {
 				for (y=s.y-s.spy; y>noteY-(s.spy/4); y=y-s.spy) {
-					t.drawLine(noteX-nd[1], y, noteX+nd[1], y, noteheadColor, s.h/20, true);
+					t.drawLine(noteX-nd[1], y, noteX+nd[1], y, noteheadColor, s.h/50, true);
 				}
 			} else {
 				for (y=s.y+s.h+s.spy; y<noteY+(s.spy/4); y=y+s.spy) {
-					t.drawLine(noteX-nd[1], y, noteX+nd[1], y, noteheadColor, s.h/20, true);
+					t.drawLine(noteX-nd[1], y, noteX+nd[1], y, noteheadColor, s.h/50, true);
 				}
 			}
 			
