@@ -19,79 +19,78 @@
 
 class InatorName extends Inator {                                              // replace InatorName with a unique name 
     constructor(whichCanvas) {                                                 // and then add it to the last line of this file
-        super(
-            whichCanvas, {
+        var eventRegistry = {
                 
-                ///// add code below to respond to specific user events
-                ///// remember to call this.draw() to refresh the inator's canvas if necessary
+            ///// add code below to respond to specific user events
+            ///// remember to call this.draw() to refresh the inator's canvas if necessary
+            
+            pointerdown: (e) => {                                            // pointerdown occurred at epos.x, epos.y
+                let epos = this.getEventPosition(e);
                 
-                pointerdown: (e) => {                                            // pointerdown occurred at epos.x, epos.y
-                    let epos = this.getEventPosition(e);
-                    
-                    // your code here
-                    
-                    
-                    // this.myWindow.addEventListener('pointerup', (e) => {      // use this code to track if the user has
-                    //     this.mouseIsDown = false;                           // released the mouse button outside the inator
-                    // });
-                    this.mouseIsDown = true;
-                },
-                pointermove: (e) => {                                            // mouse has moved to epos.x, epos.y
-                    let epos = this.getEventPosition(e);
-                    
-                    // your code here
-                    
-                },
-                pointerup: (e) => {                                              // pointerup occurred at epos.x, epos.y
-                    let epos = this.getEventPosition(e);
-                    
-                    // your code here
-                    
-                },
+                // your code here
                 
-                ///// key presses are important to make inators accessible!
-                ///// provide keyboard shortcuts to all visual controls and describe them in the inator's alt text.
-                ///// In the code below, use this.setAriaStatus('message') to provide screenreader responses to keypresses.
                 
-                keydown: (e) => {                                              // key with code e.keyCode was pressed
-                    if (this.keyIsDown) return;                                // remove this to allow held keys to auto-repeat
-                    this.keyIsDown = true;
-                    // e.preventDefault();                                     // use this to prevent the keypress from passing through
-                    switch (e.code) {
+                // this.myWindow.addEventListener('pointerup', (e) => {      // use this code to track if the user has
+                //     this.mouseIsDown = false;                           // released the mouse button outside the inator
+                // });
+                this.mouseIsDown = true;
+            },
+            pointermove: (e) => {                                            // mouse has moved to epos.x, epos.y
+                let epos = this.getEventPosition(e);
+                
+                // your code here
+                
+            },
+            pointerup: (e) => {                                              // pointerup occurred at epos.x, epos.y
+                let epos = this.getEventPosition(e);
+                
+                // your code here
+                
+            },
+            
+            ///// key presses are important to make inators accessible!
+            ///// provide keyboard shortcuts to all visual controls and describe them in the inator's alt text.
+            ///// In the code below, use this.setAriaStatus('message') to provide screenreader responses to keypresses.
+            
+            keydown: (e) => {                                              // key with code e.keyCode was pressed
+                if (this.keyIsDown) return;                                // remove this to allow held keys to auto-repeat
+                this.keyIsDown = true;
+                // e.preventDefault();                                     // use this to prevent the keypress from passing through
+                switch (e.code) {
+                
+                ///// use https://www.toptal.com/developers/keycode/table to find other codes.
                     
-                    ///// use https://www.toptal.com/developers/keycode/table to find other codes.
+                    case "Enter":
                         
-                        case "Enter":
-                            
-                            break;
-                        case "Space":
-                            
-                            break;
-                        case "ArrowLeft":
-                            
-                            break;
-                        case "ArrowUp":
-                            
-                            break;
-                        case "ArrowRight":
-                           
-                            break;
-                        case "ArrowDown":
-                            
-                            break;
-                    }
-                },
-                keyup: (e) => {                                                // key with code e.keyCode was released
-                    this.keyIsDown = false;
-                    // e.preventDefault();                                     // use this to prevent the keypress from passing through
-                    switch (e.code) {
-                        case "Space":
-                            
-                            break;
-                    }
+                        break;
+                    case "Space":
+                        
+                        break;
+                    case "ArrowLeft":
+                        
+                        break;
+                    case "ArrowUp":
+                        
+                        break;
+                    case "ArrowRight":
+                       
+                        break;
+                    case "ArrowDown":
+                        
+                        break;
+                }
+            },
+            keyup: (e) => {                                                // key with code e.keyCode was released
+                this.keyIsDown = false;
+                // e.preventDefault();                                     // use this to prevent the keypress from passing through
+                switch (e.code) {
+                    case "Space":
+                        
+                        break;
                 }
             }
-        );
+        };
+        super(whichCanvas, eventRegistry);
         
         ///// ****************** YOUR INITIALIZATION CODE HERE ******************
         

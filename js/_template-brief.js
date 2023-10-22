@@ -7,9 +7,10 @@
 
 class InatorName extends Inator {
     constructor(whichCanvas) {
-        super(whichCanvas, {
+        var eventRegistry = {
             // create event registry (mouse events, keyboard events, etc.)
-        });
+        };
+        super(whichCanvas, eventRegistry);
         // initialize variables & built-in widgets (keyboards, sliders, etc.)
         this.draw();
     }

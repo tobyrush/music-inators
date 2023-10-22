@@ -10,20 +10,19 @@
 
 class Example extends Inator {
     constructor(whichCanvas) {
-        super(
-            whichCanvas, {
-                
-                pointermove: (e) => { // when the mouse moves over the inator...
-                    let epos = this.getEventPosition(e);
-                    this.mouseLocation = Math.round(epos.x) + ', ' + Math.round(epos.y); // ...set this.mouseLocation to show mouse coordinates...
-                    this.draw(); // ...and redraw the screen
-                },
-                keydown: (e) => { // when a key on the computer keyboard is pressed...
-                    this.keypress = e.code; // ...set this.keypress to show the keycode...
-                    this.draw(); // ...and redraw the screen
-                }
+        var eventRegistry = {        
+            
+            pointermove: (e) => { // when the mouse moves over the inator...
+                let epos = this.getEventPosition(e);
+                this.mouseLocation = Math.round(epos.x) + ', ' + Math.round(epos.y); // ...set this.mouseLocation to show mouse coordinates...
+                this.draw(); // ...and redraw the screen
+            },
+            keydown: (e) => { // when a key on the computer keyboard is pressed...
+                this.keypress = e.code; // ...set this.keypress to show the keycode...
+                this.draw(); // ...and redraw the screen
             }
-        );
+        };
+        super(whichCanvas, eventRegistry);
         
         this.mySynth = new Tone.Synth().toDestination(); // set up a basic synthesizer
         this.myStaff = this.addStaff(60, 30, 20, 15, 'treble', 0); // draw a treble clef staff
