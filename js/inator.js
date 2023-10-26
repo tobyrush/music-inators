@@ -33,6 +33,7 @@ class Inator {
 		this.smallSliders = [];
 		this.staves = [];
 		this.synths = [];
+		this.players = [];
 		this.powerButton; this.powerButtonWidth = 5;
 		this.soundButton; this.soundButtonWidth = 5;
 		this.pow = false;
@@ -1284,17 +1285,54 @@ class Inator {
 		if (inst) {
 			s = SampleLibrary.load({ instruments: inst }).toDestination();
 		} else {
-			s = new Tone.Synth().toDestination();
+			s = new Tone.PolySynth(Tone.Synth).toDestination();
 		}
 		t.synths.push(s);
 		return synthNum;
 	}
-	playNote(whichSynth,note) {
+	addPlayer(whichFile) {
+		let p, t = this;
+		let playerNum = t.players.length;
+		p = new Tone.Player(whichFile).toDestination();
+		t.players.push(p);
+		return playerNum;
+	}
+	playNote(whichSynth,note, duration = 0) {
 		Tone.start();
-		this.synths[whichSynth].triggerAttack(note);
+		if (duration > 0) {
+			this.synths[whichSynth].triggerAttackRelease(note, duration);
+		} else {
+			this.synths[whichSynth].triggerAttack(note);
+		}
 	}
 	stopNote(whichSynth,note) {
 		this.synths[whichSynth].triggerRelease(note);
+	}
+	startPlayback(whichPlayer, start=null, duration=null) {
+		Tone.start();
+		this.players[whichPlayer].loop = false;
+		this.players[whichPlayer].start(null, start, duration);
+	}
+	loopPlayback(whichPlayer, start, end) {
+		Tone.start();
+		this.players[whichPlayer].loop = true;
+		this.players[whichPlayer].setLoopPoints(start, end);
+		this.players[whichPlayer].start();
+	}
+	stopPlayback(whichPlayer) {
+		this.players[whichPlayer].stop();
+	}
+	getSynthVolume(whichSynth) {
+		return (this.synths[whichSynth].volume.value)/(-36)*100;
+	}
+	setSynthVolume(whichSynth, val) {
+		this.synths[whichSynth].volume.value = -36 * ((100-val)/100);
+	}
+	getPlayerVolume(whichPlayer) {
+		return (this.players[whichPlayer].volume.value)/(-36)*100;
+	}
+	setPlayerVolume(whichPlayer, val) {
+		this.players[whichPlayer].volume.value = -36 * ((100-val)/100);
 	}
 	draw() {
 		let t=this;
