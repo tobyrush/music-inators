@@ -1313,7 +1313,7 @@ class Inator {
 		this.players[whichPlayer].loop = false;
 		this.players[whichPlayer].start(null, start, duration);
 	}
-	loopPlayback(whichPlayer, start, end) {
+	loopPlayback(whichPlayer, start=null, end=null) {
 		Tone.start();
 		this.players[whichPlayer].loop = true;
 		this.players[whichPlayer].setLoopPoints(start, end);
