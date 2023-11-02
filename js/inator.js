@@ -1297,6 +1297,12 @@ class Inator {
 		t.players.push(p);
 		return playerNum;
 	}
+	synthObject(whichSynth) {
+		return this.synths[whichSynth];
+	}
+	playerObject(whichPlayer) {
+		return this.players[whichPlayer];
+	}
 	playNote(whichSynth,note, duration = 0) {
 		Tone.start();
 		if (duration > 0) {
