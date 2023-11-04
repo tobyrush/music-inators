@@ -7,5 +7,5 @@ A [reference manual](https://github.com/tobyrush/music-inators/wiki) is availabl
 
 Music-inators includes
 
-* [Tone.js]([tonejs.github.io](https://tonejs.github.io)) by Yotam Mann, which is copyright 2014-2019 Yotam Mann and distributed under the MIT License (http://opensource.org/licenses/MIT).
+* [Tone.js](https://tonejs.github.io) by Yotam Mann, which is copyright 2014-2019 Yotam Mann and distributed under the MIT License (http://opensource.org/licenses/MIT).
 * [Bravura](https://github.com/steinbergmedia/bravura) by Daniel Spreadbury, which is copyright 2014 by Steinberg Media Technologies GmbH and distributed under the SIL Open Font License, Version 1.1 (http://scripts.sil.org/OFL)
