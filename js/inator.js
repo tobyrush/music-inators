@@ -473,7 +473,7 @@ class Inator {
 		// t.ctx.closePath();
 		t.ctx.fill();
 	}
-	getTextWidth(text,size,style="normal",fontName='"Fira Sans Condensed"') {
+	getTextWidth(text,size,style="normal",fontName='"sans-serif"') {
 		let t = this;
 		t.ctx.font=style+" "+t.y(size)+"px "+fontName;
 		return t.unx(t.ctx.measureText(text).width);
@@ -522,12 +522,12 @@ class Inator {
 		});
 		return t.unx(cx)-x;
 	}
-	drawText(x,y,text,size,align="left",style="normal",color=this.black,rotateDegrees=0,rotX=null,rotY=null,fontName='"Fira Sans Condensed"',width=0, resizeText=false, textBaseline='top') {
+	drawText(x,y,text,size,align="left",style="normal",color=this.black,rotateDegrees=0,rotX=null,rotY=null,fontName='"sans-serif"',width=0, resizeText=false, textBaseline='top') {
 		let t = this;
 		rotX = (rotX===null ? x : rotX);
 		rotY = (rotY===null ? y : rotY);
 		if (!fontName) {
-			fontName = '"Fira Sans Condensed"';
+			fontName = '"sans-serif"';
 		}
 		t.ctx.fillStyle=color;
 		t.ctx.textAlign=align;
