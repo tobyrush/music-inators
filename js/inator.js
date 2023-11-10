@@ -47,6 +47,7 @@ class Inator {
 		this.setStrings();
 		this.myCanvas.addEventListener('touchstart', function(e) { e.preventDefault(); });
 		this.myWindow.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', this.setDarkMode.bind(this));
+		this.myWindow.addEventListener('resize', this.resizeInator.bind(this));
 		if (this.myDocument.querySelector('#main')) {
 			this.myDocument.querySelector('#main').addEventListener('scroll', this.scrolled.bind(this));
 		}
@@ -56,6 +57,10 @@ class Inator {
 			await bravuraFont.load();
 			this.draw();
 		}
+	}
+	resizeInator() {
+		this.myCanvas.width = this.myCanvas.clientWidth;
+		this.myCanvas.height = this.myCanvas.clientHeight;
 	}
 	setDarkMode() {
 		this.darkMode = (this.myWindow.matchMedia && this.myWindow.matchMedia('(prefers-color-scheme: dark)').matches);
