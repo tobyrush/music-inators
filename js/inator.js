@@ -924,6 +924,92 @@ class Inator {
 	addStaffNote(staffIndex,staffX,staffNote,noteType,numberOfDots=0,forceStemDirection=0,noteColor=this.notationFigureColor,accidentalOffset=0) {
 		return this.addNote(staffIndex,staffX,staffNote.staffIndex ?? null,noteType,numberOfDots,staffNote.accidental ?? '',forceStemDirection,noteColor,accidentalOffset);
 	}
+	addChord(staffIndex,staffX,notes,noteType,numberOfDots=0,forceStemDirection=0) {
+		let t = this;
+		let positionAverage = 0;
+		notes.sort((a,b) => {
+			if (a[0] > b[0]) {
+				return 1;
+			} else if (a[0] < b[0]) {
+				return -1;
+			}
+			return 0;
+		});
+		notes.forEach((n) => {
+			positionAverage += n[0];
+		});
+		let prevPitch = -9999;
+		let offset = 1;
+		let stemUp = (positionAverage<0) || forceStemDirection>0;
+		if (!stemUp) {
+			notes.reverse();
+			prevPitch = 9999;
+			offset = -1;
+		}
+		let flip = 0;
+		let acc = {};
+		notes.forEach((n) => {
+			if (Math.abs(n[0]-prevPitch)<2) {
+				flip = (flip ? 0 : 1);
+			} else {
+				flip = 0;
+			}
+			t.addNotehead(staffIndex, staffX, n[0], t.getNotehead(noteType), offset*flip, n[2]);
+			prevPitch = n[0];
+			if (!stemUp && flip) {
+				t.setAccGrid(acc, 0, n[0]);
+			}
+		});
+		t.addStem(staffIndex, staffX, notes[0][0], t.getNotehead(noteType), t.getNumberOfFlags(noteType), stemUp?1:0, 0, null, (Math.abs(notes[0][0]-prevPitch)/2)+3.5);
+		if (stemUp) {
+			notes.reverse();
+		}
+		notes.forEach((n) => {
+			if (n[1]) {
+				let inset = 0;
+				while (t.getAccGrid(acc, inset, n[0], n[1])) {
+					inset += 1;
+				}
+				t.addAccidental(staffIndex, staffX-(inset*1.35), n[0], n[1], t.getNotehead(noteType), n[2]);
+				t.setAccGrid(acc, inset, n[0], n[1]);
+			}
+		});
+		
+	}
+	setAccGrid(acc, inset, pitch, glyph='', val=true) {
+		if (!acc[inset]) {
+			acc[inset] = {};
+		}
+		acc[inset][pitch] = val;
+		if (glyph=='flat' || glyph=='doubleFlat' || glyph=='sharp') {
+			acc[inset][pitch+2] = val;
+			acc[inset][pitch+1] = val;
+			acc[inset][pitch-1] = val;
+			acc[inset][pitch-2] = val;
+			if (glyph=='sharp') {
+				acc[inset][pitch-3] = val;
+			}
+			if (glyph=='flat') {
+				acc[inset][pitch+3] = val;
+			}
+			if (glyph=='doubleFlat') {
+				this.setAccGrid(acc, inset+1, pitch, 'flat', val);
+			}
+		}
+	}
+	getAccGrid(a, i, p, g='') {
+		if (!a[i]) {
+			return false
+		} else {
+			if (g=='sharp') {
+				return ((a[i][p+2] || a[i][p+1] || a[i][p] || a[i][p-1] || a[i][p-2] || a[i][p-3]) ?? false);
+			} else if (g=='flat' || g=='doubleFlat') {
+				return ((a[i][p+3] || a[i][p+2] || a[i][p+1] || a[i][p] || a[i][p-1] || a[i][p-2]) ?? false);
+			} else {
+				return a[i][p] ?? false;
+			}
+		}
+	}
 	addNote(staffIndex,staffX,staffY,noteType,numberOfDots=0,accidental='',forceStemDirection=0,noteColor=this.notationFigureColor,accidentalOffset=0) {
 		let t = this;
 		let s = t.staves[staffIndex];
