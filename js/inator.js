@@ -948,6 +948,7 @@ class Inator {
 		}
 		let flip = 0;
 		let acc = {};
+		let offsetDots = 0;
 		notes.forEach((n) => {
 			if (Math.abs(n[0]-prevPitch)<2) {
 				flip = (flip ? 0 : 1);
@@ -958,6 +959,9 @@ class Inator {
 			prevPitch = n[0];
 			if (!stemUp && flip) {
 				t.setAccGrid(acc, 0, n[0]);
+			}
+			if (stemUp && flip) {
+				offsetDots = t.getNoteheadData(t.getNotehead(noteType), t.staves[staffIndex].h)[1];
 			}
 		});
 		t.addStem(staffIndex, staffX, notes[0][0], t.getNotehead(noteType), t.getNumberOfFlags(noteType), stemUp?1:0, 0, null, (Math.abs(notes[0][0]-prevPitch)/2)+3.5);
@@ -972,9 +976,11 @@ class Inator {
 				}
 				t.addAccidental(staffIndex, staffX-(inset*1.35), n[0], n[1], t.getNotehead(noteType), n[2]);
 				t.setAccGrid(acc, inset, n[0], n[1]);
+				if (numberOfDots) {
+					t.addDots(staffIndex, staffX+(offsetDots/2), n[0], numberOfDots, t.getNotehead(noteType), n[2]);
+				}
 			}
 		});
-		
 	}
 	setAccGrid(acc, inset, pitch, glyph='', val=true) {
 		if (!acc[inset]) {
