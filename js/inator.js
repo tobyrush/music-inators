@@ -964,7 +964,9 @@ class Inator {
 				offsetDots = t.getNoteheadData(t.getNotehead(noteType), t.staves[staffIndex].h)[1];
 			}
 		});
-		t.addStem(staffIndex, staffX, notes[0][0], t.getNotehead(noteType), t.getNumberOfFlags(noteType), stemUp?1:0, 0, null, (Math.abs(notes[0][0]-prevPitch)/2)+3.5);
+		if (['oneHundredTwentyEighth','sixtyFourth','thirtySecond','sixteenth','eighth','quarter','half','x','triangle'].includes(noteType)) {
+			t.addStem(staffIndex, staffX, notes[0][0], t.getNotehead(noteType), t.getNumberOfFlags(noteType), stemUp?1:0, 0, null, (Math.abs(notes[0][0]-prevPitch)/2)+3.5);
+		}
 		if (stemUp) {
 			notes.reverse();
 		}
