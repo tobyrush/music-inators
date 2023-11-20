@@ -976,7 +976,7 @@ class Inator {
 				while (t.getAccGrid(acc, inset, n[0], n[1])) {
 					inset += 1;
 				}
-				t.addAccidental(staffIndex, staffX-(inset*1.35), n[0], n[1], t.getNotehead(noteType), n[2]);
+				t.addAccidental(staffIndex, staffX-(inset*0.7), n[0], n[1], t.getNotehead(noteType), n[2]);
 				t.setAccGrid(acc, inset, n[0], n[1]);
 				if (numberOfDots) {
 					t.addDots(staffIndex, staffX+(offsetDots/2), n[0], numberOfDots, t.getNotehead(noteType), n[2]);
@@ -984,25 +984,45 @@ class Inator {
 			}
 		});
 	}
-	setAccGrid(acc, inset, pitch, glyph='', val=true) {
-		if (!acc[inset]) {
-			acc[inset] = {};
-		}
-		acc[inset][pitch] = val;
-		if (glyph=='flat' || glyph=='doubleFlat' || glyph=='sharp') {
-			acc[inset][pitch+2] = val;
-			acc[inset][pitch+1] = val;
-			acc[inset][pitch-1] = val;
-			acc[inset][pitch-2] = val;
-			if (glyph=='sharp' || glyph=='natural') {
-				acc[inset][pitch-3] = val;
-			}
-			if (glyph=='flat') {
-				acc[inset][pitch+3] = val;
-			}
-			if (glyph=='doubleFlat') {
-				this.setAccGrid(acc, inset+1, pitch, 'flat', val);
-			}
+	setAccGrid(a, i, p, g='', v=true) {
+		switch (g) {
+			case 'doubleFlat':
+				if (!a[i]) { a[i] = {}; }
+				if (!a[i+1]) { a[i+1] = {}; }
+				if (!a[i+2]) { a[i+2] = {}; }
+				a[i][p+3] = v;  a[i+1][p+3] = v;  a[i+2][p+3] = v;
+				a[i][p+2] = v;  a[i+1][p+2] = v;  a[i+2][p+2] = v;
+				a[i][p+1] = v;  a[i+1][p+1] = v;  a[i+2][p+1] = v;
+				a[i][p+0] = v;  a[i+1][p+0] = v;  a[i+2][p+0] = v;
+				a[i][p-1] = v;  a[i+1][p-1] = v;  a[i+2][p-1] = v;
+				a[i][p-2] = v;  a[i+1][p-2] = v;  a[i+2][p-2] = v;
+				break;
+			case 'flat':
+				if (!a[i]) { a[i] = {}; }
+				if (!a[i+1]) { a[i+1] = {}; }
+				a[i][p+3] = v;  a[i+1][p+3] = v;
+				a[i][p+2] = v;  a[i+1][p+2] = v;
+				a[i][p+1] = v;  a[i+1][p+1] = v;
+				a[i][p+0] = v;  a[i+1][p+0] = v;
+				a[i][p-1] = v;  a[i+1][p-1] = v;
+				a[i][p-2] = v;  a[i+1][p-2] = v;
+				break;
+			case 'sharp':
+			case 'natural':
+				if (!a[i]) { a[i] = {}; }
+				if (!a[i+1]) { a[i+1] = {}; }
+				a[i][p+2] = v;  a[i+1][p+2] = v;
+				a[i][p+1] = v;  a[i+1][p+1] = v;
+				a[i][p+0] = v;  a[i+1][p+0] = v;
+				a[i][p-1] = v;  a[i+1][p-1] = v;
+				a[i][p-2] = v;  a[i+1][p-2] = v;
+				a[i][p-3] = v;  a[i+1][p-3] = v;
+				break;
+			default: // doubleSharp or ''
+				if (!a[i]) { a[i] = {}; }
+				if (!a[i+1]) { a[i+1] = {}; }
+				a[i][p+0] = v;  a[i+1][p+0] = v;
+				break;
 		}
 	}
 	getAccGrid(a, i, p, g='') {
