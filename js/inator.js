@@ -992,7 +992,7 @@ class Inator {
 			acc[inset][pitch+1] = val;
 			acc[inset][pitch-1] = val;
 			acc[inset][pitch-2] = val;
-			if (glyph=='sharp') {
+			if (glyph=='sharp' || glyph=='natural') {
 				acc[inset][pitch-3] = val;
 			}
 			if (glyph=='flat') {
@@ -1007,7 +1007,7 @@ class Inator {
 		if (!a[i]) {
 			return false
 		} else {
-			if (g=='sharp') {
+			if (g=='sharp' || g=='natural') {
 				return ((a[i][p+2] || a[i][p+1] || a[i][p] || a[i][p-1] || a[i][p-2] || a[i][p-3]) ?? false);
 			} else if (g=='flat' || g=='doubleFlat') {
 				return ((a[i][p+3] || a[i][p+2] || a[i][p+1] || a[i][p] || a[i][p-1] || a[i][p-2]) ?? false);
