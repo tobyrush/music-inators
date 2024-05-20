@@ -998,7 +998,20 @@ class Inator {
 	}
 	setAccGrid(a, i, p, g='', v=true) {
 		switch (g) {
+			case 'tripleFlat':
+				if (!a[i]) { a[i] = {}; }
+				if (!a[i+1]) { a[i+1] = {}; }
+				if (!a[i+2]) { a[i+2] = {}; }
+				if (!a[i+3]) { a[i+3] = {}; }
+				a[i][p+3] = v;  a[i+1][p+3] = v;  a[i+2][p+3] = v;  a[i+3][p+3] = v;
+				a[i][p+2] = v;  a[i+1][p+2] = v;  a[i+2][p+2] = v;  a[i+3][p+2] = v;
+				a[i][p+1] = v;  a[i+1][p+1] = v;  a[i+2][p+1] = v;  a[i+3][p+1] = v;
+				a[i][p+0] = v;  a[i+1][p+0] = v;  a[i+2][p+0] = v;  a[i+3][p+0] = v;
+				a[i][p-1] = v;  a[i+1][p-1] = v;  a[i+2][p-1] = v;  a[i+3][p-1] = v;
+				a[i][p-2] = v;  a[i+1][p-2] = v;  a[i+2][p-2] = v;  a[i+3][p-2] = v;
+				break;
 			case 'doubleFlat':
+			case 'tripleSharp':
 				if (!a[i]) { a[i] = {}; }
 				if (!a[i+1]) { a[i+1] = {}; }
 				if (!a[i+2]) { a[i+2] = {}; }
@@ -1041,9 +1054,9 @@ class Inator {
 		if (!a[i]) {
 			return false
 		} else {
-			if (g=='sharp' || g=='natural') {
+			if (g=='sharp' || g=='natural' || g=='tripleSharp') {
 				return ((a[i][p+2] || a[i][p+1] || a[i][p] || a[i][p-1] || a[i][p-2] || a[i][p-3]) ?? false);
-			} else if (g=='flat' || g=='doubleFlat') {
+			} else if (g=='flat' || g=='doubleFlat' || g=='tripleFlat') {
 				return ((a[i][p+3] || a[i][p+2] || a[i][p+1] || a[i][p] || a[i][p-1] || a[i][p-2]) ?? false);
 			} else {
 				return a[i][p] ?? false;
