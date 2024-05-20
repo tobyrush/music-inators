@@ -1184,7 +1184,9 @@ class Inator {
 			'natural':t.naturalSymbol,
 			'sharp':t.sharpSymbol,
 			'doubleSharp':t.doubleSharpSymbol,
-			'doubleFlat':t.doubleFlatSymbol
+			'doubleFlat':t.doubleFlatSymbol,
+			'tripleSharp':t.tripleSharpSymbol,
+			'tripleFlat':t.tripleFlatSymbol
 		}[accidental];
 		t.drawText(x-nd[1], y, accText, s.h, 'right', '400', accidentalColor, undefined, undefined, undefined, 'Bravura', undefined, undefined, 'alphabetic');
 	}
