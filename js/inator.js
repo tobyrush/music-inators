@@ -125,10 +125,10 @@ class Inator {
 		this.sharpSymbol = '\ue262';
 		this.doubleSharpSymbol = '\ue263';
 		this.doubleFlatSymbol = '\ue264';
+		this.tripleSharpSymbol = '\ue265';
+		this.tripleFlatSymbol = '\ue266';
 	}
-	// resourceURL(filename) {
-	// 	return this.resourcesDirectory+filename;
-	// }
+
 	getParam(paramName) {
 		let val = this.myCanvas.dataset[paramName];
 		if (val) {
