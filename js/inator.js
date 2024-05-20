@@ -563,6 +563,18 @@ class Inator {
 		t.ctx.fillText(truncText,t.x(x),t.y(ay));
 		t.ctx.restore();
 	}
+	drawMusicSymbol(x,y,symbol,size,align,color=this.black) {
+		let whichSymbol = {
+			'flat':this.flatSymbol,
+			'natural':this.naturalSymbol,
+			'sharp':this.sharpSymbol,
+			'doubleSharp':this.doubleSharpSymbol,
+			'doubleFlat':this.doubleFlatSymbol,
+			'tripleSharp':this.tripleSharpSymbol,
+			'tripleFlat':this.tripleFlatSymbol
+		}[symbol];
+		this.drawText(x, y, whichSymbol, size, align, 'normal', color, null, null, null, 'Bravura', null, null, 'alphabetic');
+	}
 	drawBezierShape(pointArray,color,lineWidth,closePath = false) {
 		let t=this;
 		t.ctx.strokeStyle = color;
