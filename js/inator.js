@@ -940,15 +940,15 @@ class Inator {
 		let t = this;
 		let positionAverage = 0;
 		notes.sort((a,b) => {
-			if (a[0] > b[0]) {
+			if (a.staffPosition > b.staffPosition) {
 				return 1;
-			} else if (a[0] < b[0]) {
+			} else if (a.staffPosition < b.staffPosition) {
 				return -1;
 			}
 			return 0;
 		});
 		notes.forEach((n) => {
-			positionAverage += n[0];
+			positionAverage += n.staffPosition;
 		});
 		let prevPitch = -9999;
 		let offset = 1;
@@ -962,36 +962,36 @@ class Inator {
 		let acc = {};
 		let offsetDots = 0;
 		notes.forEach((n) => {
-			if (Math.abs(n[0]-prevPitch)<2) {
+			if (Math.abs(n.staffPosition-prevPitch)<2) {
 				flip = (flip ? 0 : 1);
 			} else {
 				flip = 0;
 			}
-			t.addNotehead(staffIndex, staffX, n[0], t.getNotehead(noteType), offset*flip, n[2]);
-			prevPitch = n[0];
+			t.addNotehead(staffIndex, staffX, n.staffPosition, t.getNotehead(noteType), offset*flip, n.color ?? t.black);
+			prevPitch = n.staffPosition;
 			if (!stemUp && flip) {
-				t.setAccGrid(acc, 0, n[0]);
+				t.setAccGrid(acc, 0, n.staffPosition);
 			}
 			if (stemUp && flip) {
 				offsetDots = t.getNoteheadData(t.getNotehead(noteType), t.staves[staffIndex].h)[1];
 			}
 		});
 		if (['oneHundredTwentyEighth','sixtyFourth','thirtySecond','sixteenth','eighth','quarter','half','x','triangle'].includes(noteType)) {
-			t.addStem(staffIndex, staffX, notes[0][0], t.getNotehead(noteType), t.getNumberOfFlags(noteType), stemUp?1:0, 0, null, (Math.abs(notes[0][0]-prevPitch)/2)+3.5);
+			t.addStem(staffIndex, staffX, notes[0].staffPosition, t.getNotehead(noteType), t.getNumberOfFlags(noteType), stemUp?1:0, 0, null, (Math.abs(notes[0].staffPosition-prevPitch)/2)+3.5);
 		}
 		if (stemUp) {
 			notes.reverse();
 		}
 		notes.forEach((n) => {
-			if (n[1]) {
+			if (n.accidental) {
 				let inset = 0;
-				while (t.getAccGrid(acc, inset, n[0], n[1])) {
+				while (t.getAccGrid(acc, inset, n.staffPosition, n.accidental)) {
 					inset += 1;
 				}
-				t.addAccidental(staffIndex, staffX-(inset*0.7), n[0], n[1], t.getNotehead(noteType), n[2]);
-				t.setAccGrid(acc, inset, n[0], n[1]);
+				t.addAccidental(staffIndex, staffX-(inset*0.7), n.staffPosition, n.accidental, t.getNotehead(noteType), n.color ?? t.black);
+				t.setAccGrid(acc, inset, n.staffPosition, n.accidental);
 				if (numberOfDots) {
-					t.addDots(staffIndex, staffX+(offsetDots/2), n[0], numberOfDots, t.getNotehead(noteType), n[2]);
+					t.addDots(staffIndex, staffX+(offsetDots/2), n.staffPosition, numberOfDots, t.getNotehead(noteType), n.color ?? t.black);
 				}
 			}
 		});
