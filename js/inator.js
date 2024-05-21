@@ -1503,6 +1503,14 @@ class Inator {
 	stopNote(whichSynth,note) {
 		this.synths[whichSynth].triggerRelease(note);
 	}
+	scheduleNote(whichSynth,note,when,duration = 0) {
+		Tone.start();
+		if (duration > 0) {
+			this.synths[whichSynth].triggerAttackRelease(note, duration, Tone.now()+when);
+		} else {
+			this.synths[whichSynth].triggerAttack(note, Tone.now()+when);
+		}
+	}
 	startPlayback(whichPlayer, start=null, duration=null) {
 		Tone.start();
 		this.players[whichPlayer].loop = false;
