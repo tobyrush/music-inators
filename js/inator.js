@@ -1267,6 +1267,46 @@ class Inator {
 			'triangle':['\ue0bd',spx*1.3]
 		}[noteheadType];
 	}
+	getNotehead(noteType) {
+		return {
+			'oneHundredTwentyEighth':'black',
+			'sixtyFourth':'black',
+			'thirtySecond':'black',
+			'sixteenth':'black',
+			'eighth':'black',
+			'quarter':'black',
+			'quarterStemless':'black',
+			'half':'half',
+			'halfStemless':'half',
+			'whole':'whole',
+			'doubleWhole':'doubleWhole',
+			'doubleWholeSquare':'doubleWholeSquare',
+			'x':'x',
+			'xstemless':'x',
+			'triangle':'triangle',
+			'trianglestemless':'triangle'
+		}[noteType];
+	}
+	getNumberOfFlags(noteType) {
+		return {
+			'oneHundredTwentyEighth':5,
+			'sixtyFourth':4,
+			'thirtySecond':3,
+			'sixteenth':2,
+			'eighth':1,
+			'quarter':0,
+			'quarterStemless':0,
+			'half':0,
+			'halfStemless':0,
+			'whole':0,
+			'doubleWhole':0,
+			'doubleWholeSquare':0,
+			'x':0,
+			'xstemless':0,
+			'triangle':0,
+			'trianglestemless':0
+		}[noteType];
+	}
 	showStaff(staffIndex) {
 		this.staves[staffIndex].visible = true;
 	}
