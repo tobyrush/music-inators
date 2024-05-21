@@ -1252,6 +1252,9 @@ class Inator {
 		let s = this.staves[staffIndex];
 		return (y-(s.y+(s.h/2)))/(-1*(s.h/8));
 	}
+	getStaffHeight(staffIndex) {
+		return this.staves[staffIndex].h;
+	}
 	getNoteheadData(noteheadType,staffHeight) {
 		let spx = this.scaleYToX(staffHeight/4);
 		return {
