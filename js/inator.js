@@ -967,7 +967,7 @@ class Inator {
 			} else {
 				flip = 0;
 			}
-			t.addNotehead(staffIndex, staffX, n.staffPosition, t.getNotehead(noteType), offset*flip, n.color ?? t.black);
+			t.addNotehead(staffIndex, staffX, n.staffPosition, t.getNotehead(noteType), offset*flip, n.color ?? t.notationFigureColor);
 			prevPitch = n.staffPosition;
 			if (!stemUp && flip) {
 				t.setAccGrid(acc, 0, n.staffPosition);
@@ -988,10 +988,10 @@ class Inator {
 				while (t.getAccGrid(acc, inset, n.staffPosition, n.accidental)) {
 					inset += 1;
 				}
-				t.addAccidental(staffIndex, staffX-(inset*0.7), n.staffPosition, n.accidental, t.getNotehead(noteType), n.color ?? t.black);
+				t.addAccidental(staffIndex, staffX-(inset*0.7), n.staffPosition, n.accidental, t.getNotehead(noteType), n.color ?? t.notationFigureColor);
 				t.setAccGrid(acc, inset, n.staffPosition, n.accidental);
 				if (numberOfDots) {
-					t.addDots(staffIndex, staffX+(offsetDots/2), n.staffPosition, numberOfDots, t.getNotehead(noteType), n.color ?? t.black);
+					t.addDots(staffIndex, staffX+(offsetDots/2), n.staffPosition, numberOfDots, t.getNotehead(noteType), n.color ?? t.notationFigureColor);
 				}
 			}
 		});
