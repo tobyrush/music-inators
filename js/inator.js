@@ -526,8 +526,7 @@ class Inator {
 			cx = cx + (h*0.666);
 		});
 		return t.unx(cx)-x;
-	}
-	
+	}	
 	drawText(x,y,text,size,align="left",style="normal",color=this.black,rotateDegrees=0,rotX=null,rotY=null,fontName='"sans-serif"',width=0, resizeText=false, textBaseline='top') {
 		let t = this;
 		rotX = (rotX===null ? x : rotX);
