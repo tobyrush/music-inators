@@ -527,7 +527,7 @@ class Inator {
 		});
 		return t.unx(cx)-x;
 	}
-	drawText(x,y,text,size,align="left",style="normal",color=this.black,rotateDegrees=0,rotX=null,rotY=null,fontName='"sans-serif"',width=0, resizeText=false, textBaseline='top') {
+	drawText(x,y,text,size,align="left",style="normal",color=this.black,rotateDegrees=0,rotX=null,rotY=null,fontName='"sans-serif"',width=0, resizeText=false, textBaseline='top', wrapText=false, lineSpacing=null) {
 		let t = this;
 		rotX = (rotX===null ? x : rotX);
 		rotY = (rotY===null ? y : rotY);
@@ -543,24 +543,47 @@ class Inator {
 		t.ctx.translate(t.x(rotX),t.y(rotY));
 		t.ctx.rotate(rotateDegrees*Math.PI/180);
 		t.ctx.translate(0-t.x(rotX),0-t.y(rotY));
-		let truncText = text;
-		if (width>0) {
-			if (resizeText) {
-				while (t.ctx.measureText(truncText).width>t.x(width)) {
-					size -= 0.1;
-					t.ctx.font=style+" "+t.y(size)+"px "+fontName;
+		if (wrapText) {
+			// wrapping function adapted from crazy2be on https://stackoverflow.com/questions/2936112/text-wrap-in-a-canvas-element
+			var words = text.split(' ');
+			var lines = [];
+			var currentLine = words[0];
+			var ls = lineSpacing ?? (size*1.2);
+			
+			for (var i = 1; i < words.length; i++) {
+				var word = words[i];
+				var w = t.ctx.measureText(currentLine + ' ' + word).width;
+				if (w < t.x(width)) {
+					currentLine += ' ' + word;
+				} else {
+					lines.push(currentLine);
+					currentLine = word;
 				}
-			} else {
-				while (t.ctx.measureText(truncText).width>t.x(width)) {
-					if (truncText.length>1) {
-						truncText = truncText.replace(/(\u2026)$/, '').slice(0,-1) + "\u2026";
-					} else {
-						truncText = '';
+			}
+			lines.push(currentLine);
+			lines.forEach( (l,i) => {
+				t.ctx.fillText(l, t.x(x), t.y(ay+(ls*i)));
+			});
+		} else {
+			let truncText = text;
+			if (width>0) {
+				if (resizeText) {
+					while (t.ctx.measureText(truncText).width>t.x(width)) {
+						size -= 0.1;
+						t.ctx.font=style+" "+t.y(size)+"px "+fontName;
+					}
+				} else {
+					while (t.ctx.measureText(truncText).width>t.x(width)) {
+						if (truncText.length>1) {
+							truncText = truncText.replace(/(\u2026)$/, '').slice(0,-1) + "\u2026";
+						} else {
+							truncText = '';
+						}
 					}
 				}
 			}
+			t.ctx.fillText(truncText,t.x(x),t.y(ay));
 		}
-		t.ctx.fillText(truncText,t.x(x),t.y(ay));
 		t.ctx.restore();
 	}
 	drawMusicSymbol(x,y,symbol,size,align,color=this.black) {
