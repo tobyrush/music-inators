@@ -1066,7 +1066,15 @@ class Inator {
 				a[i][p-2] = v;  a[i+1][p-2] = v;
 				a[i][p-3] = v;  a[i+1][p-3] = v;
 				break;
-			default: // doubleSharp or ''
+			case 'doubleSharp':
+				if (!a[i]) { a[i] = {}; }
+				if (!a[i+1]) { a[i+1] = {}; }
+				a[i][p+1] = v;  a[i+1][p+1] = v;
+				a[i][p+0] = v;  a[i+1][p+0] = v;
+				a[i][p-1] = v;  a[i+1][p-1] = v;
+				a[i][p-2] = v;  a[i+1][p-2] = v;
+				break;
+			default: // ''
 				if (!a[i]) { a[i] = {}; }
 				if (!a[i+1]) { a[i+1] = {}; }
 				a[i][p+0] = v;  a[i+1][p+0] = v;
