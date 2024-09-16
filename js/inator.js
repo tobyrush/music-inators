@@ -1347,6 +1347,151 @@ class Inator {
 	setStaffColor(staffIndex,color) {
 		this.staves[staffIndex].color = color;
 	}
+	createInterval(distance, inflection, ascending = true) {
+		let r = {};
+		r.distance = parseInt(distance);
+		r.inflection = parseInt(inflection);
+		r.ascending = Boolean(ascending);
+		if (distance<0) {
+			r.distance = distance * -1;
+			r.ascending = !r.ascending;
+		}
+		switch (distance % 7) {
+			case 1:
+				if (inflection==1 || inflection<0) {
+					r = undefined;
+				}
+			case 4:
+			case 5:
+				if (inflection==-1 || inflection==1) {
+					r = undefined;
+				}
+				break;
+			case 2:
+			case 3:
+			case 6:
+			case 7:
+				if (inflection==0) {
+					r = undefined;
+				}
+				break;
+			default:
+				r = undefined;
+		}
+		return r;
+	}
+	
+	createNote(diatonicPitch, accidental, octave) {
+		let r = {};
+		r.diatonicPitch = parseInt(diatonicPitch);
+		r.accidental = accidental;
+		r.octave = parseInt(octave);
+		return r;
+	}
+	getNoteAtInterval(baseNote, interval) { 
+		const inflectionGrid = [
+			[null, 0, 0, 0, 0, 0, 0, 0],
+			[null, 0, 0, 1, 0, 0, 0, 1],
+			[null, 0, 1, 1, 0, 0, 1, 1],
+			[null, 0, 0, 0,-1, 0, 0, 0],
+			[null, 0, 0, 0, 0, 0, 0, 1],
+			[null, 0, 0, 1, 0, 0, 1, 1],
+			[null, 0, 1, 1, 0, 1, 1, 1]
+		];
+		
+		let resultNote = Object.create(baseNote);
+		resultNote.accidental = 0;
+		this.diatonicShift(resultNote, (interval.distance-1) * (interval.ascending ? 1 : -1));
+		let d = interval.distance;
+		while (d > 7) { d -= 7; }
+		
+		let whichInflectionRow = interval.ascending ? baseNote.diatonicPitch : ((6-baseNote.diatonicPitch)+3)%7;
+		resultNote.accidental = baseNote.accidental + ((inflectionGrid[whichInflectionRow][d]) * (interval.ascending ? 1 : -1));
+		
+		if (d==1 || d==4 || d==5) {
+			resultNote.accidental = resultNote.accidental + (interval.inflection * (interval.ascending ? 1 : -1));
+		} else {
+			if (interval.ascending) {
+				if (interval.inflection > 1) { resultNote.accidental += interval.inflection-1; }
+				else if (interval.inflection < 0) { resultNote.accidental += interval.inflection; }
+			} else {
+				if (interval.inflection < -1) { resultNote.accidental -= interval.inflection+1; }
+				else if (interval.inflection > 0) { resultNote.accidental -= interval.inflection; }
+			}
+		}
+		return resultNote;
+	}
+	
+	getInterval(firstNote, secondNote) { 
+		const inflectionGrid = [
+			[null, 0, 0, 0, 0, 0, 0, 0],
+			[null, 0, 0, 1, 0, 0, 0, 1],
+			[null, 0, 1, 1, 0, 0, 1, 1],
+			[null, 0, 0, 0,-1, 0, 0, 0],
+			[null, 0, 0, 0, 0, 0, 0, 1],
+			[null, 0, 0, 1, 0, 0, 1, 1],
+			[null, 0, 1, 1, 0, 1, 1, 1]
+		];
+		
+		let i = {};
+		i.ascending = (firstNote.octave+(firstNote.diatonicPitch/10)+(firstNote.accidental/100) < secondNote.octave+(secondNote.diatonicPitch/10)+(secondNote.accidental/100));
+		let f = firstNote;
+		let s = secondNote;
+		if (!i.ascending) {
+			s = firstNote;
+			f = secondNote;
+		}
+		i.distance = ((s.octave*7)+s.diatonicPitch) - ((f.octave*7)+f.diatonicPitch) + 1;
+		let sd = i.distance % 7;
+		
+		i.inflection = s.accidental - f.accidental - inflectionGrid[f.diatonicPitch][sd];
+		if (sd == 2 || sd == 3 || sd == 6 || sd == 7) {
+			if (i.inflection > -1) {
+				i.inflection++;
+			}
+		}
+		
+		return i;
+		
+	}
+	diatonicShift(note, shiftAmount) {
+		let i;
+		if (shiftAmount>0) {
+			for (i=1; i<=shiftAmount; i++) {
+				note.diatonicPitch += 1;
+				if (note.diatonicPitch == 7) {
+					note.diatonicPitch = 0;
+					note.octave += 1;
+				}
+			}
+		} else if (shiftAmount<0) {
+			for (i=1; i<=shiftAmount*(-1); i++) {
+				note.diatonicPitch -= 1;
+				if (note.diatonicPitch == -1) {
+					note.diatonicPitch = 6;
+					note.octave -= 1;
+				}
+			}
+		}
+	}
+	getNoteName(note, includeOctave = false, longName = false) {
+		let s = ['C','D','E','F','G','A','B'][note.diatonicPitch];
+		if (longName) {
+			s = s + ' ' + ['triple flat','double flat','flat','natural','sharp','double sharp','triple sharp'][note.accidental+3] + ' ';
+		} else {
+			s = s + ' ' + ['&tripleFlat;','&doubleFlat;','&flat;','&natural;','&sharp;','&doubleSharp;','&tripleSharp;'][note.accidental+3];
+		}
+		if (includeOctave) {
+			s = s + note.octave;
+		}
+		return s;
+	}
+	noteToFreq(note, a4 = 440) {
+		let midi = [0, 2, 4, 5, 7, 9, 11][note.diatonicPitch];
+		midi += (note.octave+1)*12;
+		midi += note.accidental;
+		return this.midiToFreq(midi, a4);
+	}
 	addKeyboard(left,top,width,height,startingNote,enabled,keyDownFunc=null,keyUpFunc=null,numWhiteKeys=0,isPolyphonic='false',showFeedback='true') {
 		let t = this;
 		let kbNum = t.keyboards.length;
