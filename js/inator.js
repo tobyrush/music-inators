@@ -1484,6 +1484,12 @@ class Inator {
 		}
 		return s;
 	}
+	noteToFreq(note, a4 = 440) {
+		let midi = [0, 2, 4, 5, 7, 9, 11][note.diatonicPitch];
+		midi += (note.octave+1)*12;
+		midi += note.accidental;
+		return this.midiToFreq(midi, a4);
+	}
 	addKeyboard(left,top,width,height,startingNote,enabled,keyDownFunc=null,keyUpFunc=null,numWhiteKeys=0,isPolyphonic='false',showFeedback='true') {
 		let t = this;
 		let kbNum = t.keyboards.length;
