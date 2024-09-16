@@ -1387,6 +1387,39 @@ class Inator {
 		r.octave = parseInt(octave);
 		return r;
 	}
+	getNoteAtInterval(baseNote, interval) { 
+		const inflectionGrid = [
+			[null, 0, 0, 0, 0, 0, 0, 0],
+			[null, 0, 0, 1, 0, 0, 0, 1],
+			[null, 0, 1, 1, 0, 0, 1, 1],
+			[null, 0, 0, 0,-1, 0, 0, 0],
+			[null, 0, 0, 0, 0, 0, 0, 1],
+			[null, 0, 0, 1, 0, 0, 1, 1],
+			[null, 0, 1, 1, 0, 1, 1, 1]
+		];
+		
+		let resultNote = Object.create(baseNote);
+		resultNote.accidental = 0;
+		this.diatonicShift(resultNote, (interval.distance-1) * (interval.ascending ? 1 : -1));
+		let d = interval.distance;
+		while (d > 7) { d -= 7; }
+		
+		let whichInflectionRow = interval.ascending ? baseNote.diatonicPitch : ((6-baseNote.diatonicPitch)+3)%7;
+		resultNote.accidental = baseNote.accidental + ((inflectionGrid[whichInflectionRow][d]) * (interval.ascending ? 1 : -1));
+		
+		if (d==1 || d==4 || d==5) {
+			resultNote.accidental = resultNote.accidental + (interval.inflection * (interval.ascending ? 1 : -1));
+		} else {
+			if (interval.ascending) {
+				if (interval.inflection > 1) { resultNote.accidental += interval.inflection-1; }
+				else if (interval.inflection < 0) { resultNote.accidental += interval.inflection; }
+			} else {
+				if (interval.inflection < -1) { resultNote.accidental -= interval.inflection+1; }
+				else if (interval.inflection > 0) { resultNote.accidental -= interval.inflection; }
+			}
+		}
+		return resultNote;
+	}
 	addKeyboard(left,top,width,height,startingNote,enabled,keyDownFunc=null,keyUpFunc=null,numWhiteKeys=0,isPolyphonic='false',showFeedback='true') {
 		let t = this;
 		let kbNum = t.keyboards.length;
