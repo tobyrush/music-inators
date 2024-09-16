@@ -1440,6 +1440,38 @@ class Inator {
 			}
 		}
 	}
+	getInterval(firstNote, secondNote) { 
+		const inflectionGrid = [
+			[null, 0, 0, 0, 0, 0, 0, 0],
+			[null, 0, 0, 1, 0, 0, 0, 1],
+			[null, 0, 1, 1, 0, 0, 1, 1],
+			[null, 0, 0, 0,-1, 0, 0, 0],
+			[null, 0, 0, 0, 0, 0, 0, 1],
+			[null, 0, 0, 1, 0, 0, 1, 1],
+			[null, 0, 1, 1, 0, 1, 1, 1]
+		];
+		
+		let i = {};
+		i.ascending = (firstNote.octave+(firstNote.diatonicPitch/10)+(firstNote.accidental/100) < secondNote.octave+(secondNote.diatonicPitch/10)+(secondNote.accidental/100));
+		let f = firstNote;
+		let s = secondNote;
+		if (!i.ascending) {
+			s = firstNote;
+			f = secondNote;
+		}
+		i.distance = ((s.octave*7)+s.diatonicPitch) - ((f.octave*7)+f.diatonicPitch) + 1;
+		let sd = i.distance % 7;
+		
+		i.inflection = s.accidental - f.accidental - inflectionGrid[f.diatonicPitch][sd];
+		if (sd == 2 || sd == 3 || sd == 6 || sd == 7) {
+			if (i.inflection > -1) {
+				i.inflection++;
+			}
+		}
+		
+		return i;
+		
+	}
 	addKeyboard(left,top,width,height,startingNote,enabled,keyDownFunc=null,keyUpFunc=null,numWhiteKeys=0,isPolyphonic='false',showFeedback='true') {
 		let t = this;
 		let kbNum = t.keyboards.length;
