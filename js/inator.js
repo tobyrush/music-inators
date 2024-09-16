@@ -1420,6 +1420,26 @@ class Inator {
 		}
 		return resultNote;
 	}
+	diatonicShift(note, shiftAmount) {
+		let i;
+		if (shiftAmount>0) {
+			for (i=1; i<=shiftAmount; i++) {
+				note.diatonicPitch += 1;
+				if (note.diatonicPitch == 7) {
+					note.diatonicPitch = 0;
+					note.octave += 1;
+				}
+			}
+		} else if (shiftAmount<0) {
+			for (i=1; i<=shiftAmount*(-1); i++) {
+				note.diatonicPitch -= 1;
+				if (note.diatonicPitch == -1) {
+					note.diatonicPitch = 6;
+					note.octave -= 1;
+				}
+			}
+		}
+	}
 	addKeyboard(left,top,width,height,startingNote,enabled,keyDownFunc=null,keyUpFunc=null,numWhiteKeys=0,isPolyphonic='false',showFeedback='true') {
 		let t = this;
 		let kbNum = t.keyboards.length;
