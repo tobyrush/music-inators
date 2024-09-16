@@ -1472,6 +1472,18 @@ class Inator {
 		return i;
 		
 	}
+	getNoteName(note, includeOctave = false, longName = false) {
+		let s = ['C','D','E','F','G','A','B'][note.diatonicPitch];
+		if (longName) {
+			s = s + ' ' + ['triple flat','double flat','flat','natural','sharp','double sharp','triple sharp'][note.accidental+3] + ' ';
+		} else {
+			s = s + ' ' + ['&tripleFlat;','&doubleFlat;','&flat;','&natural;','&sharp;','&doubleSharp;','&tripleSharp;'][note.accidental+3];
+		}
+		if (includeOctave) {
+			s = s + note.octave;
+		}
+		return s;
+	}
 	addKeyboard(left,top,width,height,startingNote,enabled,keyDownFunc=null,keyUpFunc=null,numWhiteKeys=0,isPolyphonic='false',showFeedback='true') {
 		let t = this;
 		let kbNum = t.keyboards.length;
